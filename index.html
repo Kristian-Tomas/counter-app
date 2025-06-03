@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8" />
+    <title>Counter</title>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@100..900&display=swap" rel="stylesheet">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#1d2b3a">
+    <style>
+        html, body {
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            user-select: none;
+            max-width: 100%;
+            background-color: #0d1824;
+            color: #eac174;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            font-family: "Lexend";
+            font-weight: 500;
+        }
+
+        .wrapper {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .section {
+            background-color: #1d2b3a;
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 10px;
+            border-radius: 10px;
+            border: 1px solid rgba(234, 193, 116, 0.6);
+        }
+
+        .menu {
+            margin-left: 10px;
+            margin-right: 10px;
+        }
+
+        .menu ul{
+            display: flex;
+            gap: 10px;
+        }
+
+        .menu li {
+            background-color: #2a3a4a;
+            border: 1px solid rgba(234, 193, 116, 0.6);
+            flex: 1;
+            border-radius: 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 10px 0;
+        }
+
+        .menu-counter {
+            margin-bottom: 10px;
+        }
+
+        .timer-section {
+            opacity: 1;
+            transition: opacity 0.5s ease-in-out;
+            font-size: 20vmin;
+        }
+
+        .timer-section span {
+            display: inline-block;
+            width: 1ch;
+            text-align: center;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .timer-section .separator {
+            width: 0.5ch;
+        }
+
+        #counterValue {
+            font-size: 30vmin;
+        }
+
+        .fade-out {
+            opacity: 0;
+            transition: opacity 0.5s ease-in-out;
+        }
+
+        .fade-in {
+            opacity: 1;
+            transition: opacity 0.5s ease-in-out;
+        }
+
+        ul {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        .material-symbols-outlined {
+            font-size: 10vmin;
+        }
+
+        .ripple {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .ripple-effect {
+            position: absolute;
+            border-radius: 50%;
+            background: #f1f1f120;
+            transform: scale(0);
+            animation: ripple-animation 0.6s linear;
+            opacity: 0.75;
+            pointer-events: none;
+        }
+
+        @keyframes ripple-animation {
+            to {
+                transform: scale(4);
+                opacity: 0;
+            }
+        }
+
+    </style>
+</head>
+<body>
+    <div class="wrapper">
+        <div class="section" onclick="startStop()">
+            <div class="timer-section">
+                <span id="minutes1">0</span><span id="minutes2">0</span><span class="separator">:</span><span id="seconds1">0</span><span id="seconds2">0</span><span class="separator">.</span><span id="milliseconds1">0</span><span id="milliseconds2">0</span>
+            </div>
+        </div>
+        <div class="menu">
+            <ul>
+                <li onclick="reset()"><span class="material-symbols-outlined">delete_history</span></li>
+                <li onclick="startStop()" id="startStopButton"><span class="material-symbols-outlined">play_circle</span></li>
+            </ul>
+        </div>
+    </div>
+    <div class="wrapper">
+        <div class="section" onclick="incrementCounter()">
+            <span id="counterValue">0</span>
+        </div>
+        <div class="menu menu-counter">
+            <ul>
+                <li onclick="resetCounter()"><span class="material-symbols-outlined">close</span></li>
+                <li onclick="decrementCounter()"><span class="material-symbols-outlined">exposure_neg_1</span></li>
+            </ul>
+        </div>
+    </div>
+    <script>
+        let timer;
+        let isRunning = false;
+        let startTime;
+        let elapsedTime = 0;
+
+        function startStop() {
+            if (isRunning) {
+                clearInterval(timer);
+                document.getElementById('startStopButton').innerHTML = '<span class="material-symbols-outlined">play_circle</span>';
+            } else {
+                startTime = Date.now() - elapsedTime;
+                timer = setInterval(updateDisplay, 10);
+                document.getElementById('startStopButton').innerHTML = '<span class="material-symbols-outlined">pause_circle</span>';
+            }
+            isRunning = !isRunning;
+        }
+
+        function updateDisplay() {
+            elapsedTime = Date.now() - startTime;
+            const time = new Date(elapsedTime);
+            
+            const minutes = String(time.getMinutes()).padStart(2, '0');
+            const seconds = String(time.getSeconds()).padStart(2, '0');
+            const milliseconds = String(Math.floor(time.getMilliseconds() / 10)).padStart(2, '0');
+            
+            document.getElementById('minutes1').textContent = minutes[0];
+            document.getElementById('minutes2').textContent = minutes[1];
+            document.getElementById('seconds1').textContent = seconds[0];
+            document.getElementById('seconds2').textContent = seconds[1];
+            document.getElementById('milliseconds1').textContent = milliseconds[0];
+            document.getElementById('milliseconds2').textContent = milliseconds[1];
+        }
+
+        function reset() {
+            clearInterval(timer);
+            isRunning = false;
+            elapsedTime = 0;
+            document.getElementById('startStopButton').innerHTML = '<span class="material-symbols-outlined">play_circle</span>';
+            document.getElementById('minutes1').textContent = '0';
+            document.getElementById('minutes2').textContent = '0';
+            document.getElementById('seconds1').textContent = '0';
+            document.getElementById('seconds2').textContent = '0';
+            document.getElementById('milliseconds1').textContent = '0';
+            document.getElementById('milliseconds2').textContent = '0';
+        }
+    </script>
+    <script>
+        let counterValue = 0;
+
+        function incrementCounter() {
+            counterValue++;
+            updateCounter();
+        }
+
+        function decrementCounter() {
+            if (counterValue > 0) {
+                counterValue--;
+                updateCounter();
+            }
+        }
+
+        function resetCounter() {
+            counterValue = 0;
+            updateCounter();
+        }
+
+        function updateCounter() {
+            document.getElementById('counterValue').textContent = counterValue;
+        }
+    </script>
+    <script>
+    document.querySelectorAll('[onclick]').forEach(el => {
+        el.classList.add('ripple');
+        el.addEventListener('click', function (e) {
+        const rect = el.getBoundingClientRect();
+        const ripple = document.createElement('span');
+        ripple.classList.add('ripple-effect');
+
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+
+        ripple.style.left = `${x}px`;
+        ripple.style.top = `${y}px`;
+        ripple.style.width = ripple.style.height = `${Math.max(rect.width, rect.height) * 2}px`;
+        ripple.style.marginLeft = `${-Math.max(rect.width, rect.height)}px`;
+        ripple.style.marginTop = `${-Math.max(rect.width, rect.height)}px`;
+
+        el.appendChild(ripple);
+        setTimeout(() => ripple.remove(), 600);
+        });
+    });
+    </script>
+</body>
+</html>
