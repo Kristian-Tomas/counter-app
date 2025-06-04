@@ -3,7 +3,7 @@
   "short_name": "Counter",
   "start_url": ".",
   "display": "standalone",
-  "background_color": "#0d1824",
+  "background_color": "#1d2b3a",
   "theme_color": "#1d2b3a",
   "icons": [
     {
